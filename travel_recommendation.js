@@ -1,59 +1,45 @@
 let API_DATA = null;
 
-// Referencias a elementos del DOM
 const form = document.getElementById('search-form');
 const input = document.getElementById('search-input');
 const btnClear = document.getElementById('btn-clear');
-const grid = document.getElementById('results');
+const grid = document.createElement('div');
+grid.className = 'grid';
+document.querySelector('#results')?.appendChild(grid);
 
-// Normaliza texto (quita mayúsculas y acentos)
-function normalize(text) {
-  return (text || '')
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
+function normalize(str) {
+  return str ? str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
 }
 
-// Map de zonas horarias básicas
-function guessTimeZone(countryName) {
-  const map = {
-    spain: 'Europe/Madrid',
-    india: 'Asia/Kolkata',
-    japan: 'Asia/Tokyo',
-    usa: 'America/New_York',
-    unitedstates: 'America/New_York',
-    mexico: 'America/Mexico_City',
-    brazil: 'America/Sao_Paulo',
-    argentina: 'America/Argentina/Buenos_Aires',
-    australia: 'Australia/Sydney'
-  };
-  const key = normalize(countryName).replace(/\s+/g, '');
-  return map[key];
+function resolveAlias(data) {
+  const resolved = { ...data };
+
+  if (resolved.playas) resolved.playas = resolved.beaches;
+  if (resolved.templos) resolved.templos = resolved.temples;
+  if (resolved['países'] || resolved.paises) {
+    resolved.paises = resolved.countries;
+    resolved['países'] = resolved.countries;
+  }
+
+  return resolved;
 }
 
-// Muestra la hora local si hay zona horaria
-function timeBadge(tz) {
+async function loadData() {
   try {
-    const now = new Date().toLocaleTimeString('es-ES', { 
-      timeZone: tz, 
-      hour12: true, 
-      hour: 'numeric', 
-      minute: 'numeric' 
-    });
-    return `<div style="margin-top:8px;opacity:.9">🕒 Hora local: <strong>${now}</strong></div>`;
-  } catch {
-    return '';
+    const res = await fetch('travel_recommendation_api.json');
+    const raw = await res.json();
+    API_DATA = resolveAlias(raw);
+    renderEmpty("Escribe una palabra clave (playa/beach, templo/temple, país/country).");
+  } catch (err) {
+    console.error("Error cargando JSON:", err);
+    renderEmpty("No se pudo cargar la base de datos.");
   }
 }
 
-// Pinta un mensaje vacío
 function renderEmpty(msg) {
   grid.innerHTML = `<div class="empty">${msg}</div>`;
 }
 
-// HTML de una tarjeta
 function cardHTML(item) {
   return `
     <div class="card">
@@ -68,48 +54,70 @@ function cardHTML(item) {
   `;
 }
 
-// Determina keyword (por ahora lo dejamos directo)
-function deriveKeyword(q) {
-  return normalize(q);
+function guessTimeZone(countryName) {
+  const map = {
+    spain: 'Europe/Madrid',
+    espana: 'Europe/Madrid',
+    japan: 'Asia/Tokyo',
+    brazil: 'America/Sao_Paulo',
+    australia: 'Australia/Sydney',
+    india: 'Asia/Kolkata',
+    usa: 'America/New_York',
+    mexico: 'America/Mexico_City'
+  };
+  const key = normalize(countryName).replace(/\s+/g, '');
+  return map[key];
 }
 
-// Función de búsqueda
+function timeBadge(tz) {
+  try {
+    const now = new Date().toLocaleTimeString('es-ES', {
+      timeZone: tz,
+      hour12: true,
+      hour: 'numeric',
+      minute: 'numeric'
+    });
+    return `<div style="margin-top:8px;opacity:.9">🕒 Hora local: <strong>${now}</strong></div>`;
+  } catch {
+    return '';
+  }
+}
+
 function searchByKeyword(keyword) {
   if (!API_DATA) return renderEmpty('Datos no cargados todavía.');
 
-  const { beaches = [], temples = [], countries = [] } = API_DATA;
+  const { beaches = [], temples = [], countries = [], playas = [], templos = [], paises = [] } = API_DATA;
   let results = [];
 
-  if (keyword === 'playa') {
-    results = beaches.map(b => ({
+  if (['playa', 'beach', 'playas', 'beaches'].includes(keyword)) {
+    results = (beaches || playas).map(b => ({
       title: b.name,
       description: b.description,
       imageUrl: b.imageUrl,
-      badge: 'Playa'
+      badge: 'Playa / Beach'
     }));
-  } else if (keyword === 'templo') {
-    results = temples.map(t => ({
+  } else if (['templo', 'temple', 'templos', 'temples'].includes(keyword)) {
+    results = (temples || templos).map(t => ({
       title: t.name,
       description: t.description,
       imageUrl: t.imageUrl,
-      badge: 'Templo'
+      badge: 'Templo / Temple'
     }));
-  } else if (keyword === 'pais') {
-    results = countries.flatMap(c => {
+  } else if (['pais', 'país', 'paises', 'países', 'country', 'countries'].includes(keyword)) {
+    results = (countries || paises).flatMap(c => {
       const cities = c.cities || [];
-      const tz = c.timezone || guessTimeZone(c.name);
+      const tz = c.timezone || guessTimeZone(c.name || '');
       return cities.slice(0, 2).map(city => ({
         title: `${city.name} – ${c.name}`,
         description: city.description,
         imageUrl: city.imageUrl,
-        badge: 'País',
+        badge: 'País / Country',
         extra: tz ? timeBadge(tz) : ''
       }));
     });
   } else {
-    // búsqueda por nombre de país
     const q = normalize(keyword);
-    const country = countries.find(c => normalize(c.name) === q);
+    const country = (countries || []).find(c => normalize(c.name) === q);
     if (country) {
       const tz = country.timezone || guessTimeZone(country.name);
       const cities = country.cities || [];
@@ -117,7 +125,7 @@ function searchByKeyword(keyword) {
         title: `${city.name} – ${country.name}`,
         description: city.description,
         imageUrl: city.imageUrl,
-        badge: 'País',
+        badge: 'País / Country',
         extra: tz ? timeBadge(tz) : ''
       }));
     }
@@ -132,7 +140,7 @@ form?.addEventListener('submit', (e) => {
   e.preventDefault();
   const q = input.value;
   if (!q) return renderEmpty('Escribe una palabra clave.');
-  const keyword = deriveKeyword(q);
+  const keyword = normalize(q);
   searchByKeyword(keyword);
 });
 
@@ -141,18 +149,5 @@ btnClear?.addEventListener('click', () => {
   renderEmpty('Resultados borrados.');
 });
 
-// Carga inicial de datos
-function loadData() {
-  fetch('travel_recommendation_api.json')
-    .then(res => res.json())
-    .then(data => {
-      API_DATA = data;
-      console.log("Datos cargados:", data);
-    })
-    .catch(err => {
-      console.error("Error cargando JSON:", err);
-      renderEmpty("No se pudo cargar la base de datos.");
-    });
-}
-
+// Iniciar
 window.addEventListener('DOMContentLoaded', loadData);
