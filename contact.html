@@ -4,36 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contacto - TravelBloom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Inicio</a>
-    <a href="about.html">Sobre nosotros</a>
-    <a href="contact.html">Contacto</a>
-  </nav>
 
-  <main>
-    <h1>Contacto</h1>
-    <p>¿Tienes dudas, sugerencias o simplemente quieres saludarnos? 
-    Completa el formulario y te responderemos lo antes posible.</p>
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="travel_recommendation.html"><span class="logo"></span> TravelBloom</a>
+    <nav class="links">
+      <a href="travel_recommendation.html">Inicio</a>
+      <a href="about.html">Quiénes somos</a>
+      <a href="contact.html">Contacto</a>
+    </nav>
+  </div>
+</header>
 
-    <form>
-      <label for="name">Nombre:</label>
-      <input type="text" id="name" name="name" required>
+<main class="container" style="padding:40px 0;">
+  <h1>Contáctanos</h1>
+  <p>¿Duda, sugerencia o halago? Aceptamos los tres.</p>
 
-      <label for="email">Correo electrónico:</label>
-      <input type="email" id="email" name="email" required>
+  <form class="card" style="padding:20px; max-width:500px; margin-top:20px;">
+    <input type="text" placeholder="Tu nombre" required style="margin-bottom:10px; width:100%; padding:10px;">
+    <input type="email" placeholder="Tu correo" required style="margin-bottom:10px; width:100%; padding:10px;">
+    <textarea placeholder="Cuéntanos..." rows="4" required style="margin-bottom:10px; width:100%; padding:10px;"></textarea>
+    <button class="btn" type="submit">Enviar</button>
+  </form>
+</main>
 
-      <label for="message">Mensaje:</label>
-      <textarea id="message" name="message" rows="5" required></textarea>
+<footer>
+  <div class="container foot">© 2025 TravelBloom. Todos los derechos reservados.</div>
+</footer>
 
-      <button type="submit">Enviar</button>
-    </form>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 TravelBloom. Todos los derechos reservados.</p>
-  </footer>
 </body>
 </html>
