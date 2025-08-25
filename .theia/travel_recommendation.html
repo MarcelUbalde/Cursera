@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TravelBloom – Recomendaciones de viaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1020;--fg:#eef2ff;--muted:#c7cbe6;--brand:#6ee7b7;--card:#141a33;--accent:#93c5fd}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+a{color:inherit;text-decoration:none}
+.container{width:min(1200px,90%);margin-inline:auto}
+
+
+/* NAVBAR */
+.nav{position:sticky;top:0;z-index:50;background:rgba(11,16,32,.8);backdrop-filter:blur(8px);border-bottom:1px solid #1f2747}
+.nav-inner{display:flex;align-items:center;gap:16px;padding:12px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.brand .logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--accent))}
+.links{display:flex;gap:16px;margin-left:8px}
+.links a{opacity:.9}
+.links a:hover{opacity:1}
+.grow{flex:1}
+.searchbar{display:flex;gap:8px}
+.searchbar input{flex:1;min-width:240px;background:var(--card);border:1px solid #263057;color:var(--fg);padding:10px 12px;border-radius:10px}
+.btn{border:1px solid #263057;background:#1a2140;color:var(--fg);padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn:hover{background:#222a50}
+.btn.ghost{background:transparent}
+
+
+/* HERO */
+.hero{position:relative;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;opacity:.35;z-index:-1}
+.hero-inner{padding:96px 0 72px}
+.kicker{color:var(--brand);font-weight:700;letter-spacing:.08em}
+h1{font-size:clamp(28px,5vw,48px);line-height:1.1;margin:10px 0 12px}
+.lead{color:var(--muted);max-width:60ch;margin-bottom:18px}
+.cta{display:flex;gap:12px;margin-top:8px}
+
+
+/* SOCIALS */
+.socials{display:flex;gap:12px;margin-top:18px;opacity:.9}
+.socials a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1px solid #2a355f;background:#121833}
+
+
+/* RESULTS */
+.results{padding:28px 0 56px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid #1f2747;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.card img{width:100%;height:160px;object-fit:cover}
+.card .content{padding:12px 14px}
+.badge{display:inline-block;font-size:12px;padding:4px 8px;border:1px solid #2a355f;border-radius:999px;margin-bottom:8px;color:var(--accent)}
+.empty{color:var(--muted);text-align:center;padding:32px;border:1px dashed #2a355f;border-radius:14px}
+
+
+footer{border-top:1px solid #1f2747;color:#9aa3c7}
+footer .foot{padding:24px 0;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+</style>
+</head>
+<body>
+<header class="nav">
+<div class="container nav-inner">
+<a class="brand" href="travel_recommendation.html"><span class="logo"></span> TravelBloom</a>
+<nav class="links">
+<a href="travel_recommendation.html">Inicio</a>
+<a href="about.html">Quiénes somos</a>
+<a href="contact.html">Contacto</a>
+</nav>
+<div class="grow"></div>
+<!-- Barra de búsqueda SOLO en Home -->
+<form id="search-form" class="searchbar" autocomplete="off">
+<input id="search-input" type="text" placeholder="Busca: playa, templo o país…" aria-label="Buscar recomendaciones" />
+<button class="btn" id="btn-search" type="submit">Buscar</button>
+<button class="btn ghost" id="btn-clear" type="button">Limpiar</button>
+</form>
+</div>
+</header>
+
+
+<main>
+<section class="hero">
+<div class="container hero-inner">
+<div class="kicker">Explora sin fricción</div>
+<h1>Descubre destinos que encajan contigo</h1>
+<p class="lead">Recomendaciones rápidas y claras para playas, templos y países. Cultura, paisajes y experiencias – sin humo, sin rodeos.</p>
+<div class="cta">
+<a class="btn" href="#results">Reservar ahora</a>
+<a class="btn ghost" href="about.html">Saber más</a>
+</div>
+</html>
